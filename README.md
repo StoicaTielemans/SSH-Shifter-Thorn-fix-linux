@@ -8,6 +8,9 @@ So basically, the problem is that the shifter is set up as a non-standard contro
 
 **Just install python-evdev and python-uinput and copy the python script shifter_uinput.py.**
 
+
+**You need to run sudo modprobe uinput to enable the uinput module.**
+
 **Run the script like `python3 shifter_uinput.py`**
 
 In the games, you just need to assign the gears to the corresponding numpad numbers, and it should work.

@@ -14,14 +14,32 @@ BTN_MAP = {
     299: uinput.KEY_KP9,  # BTN_BASE3 -> Numpad 9
 }
 
-device_path = "/dev/input/event16"  
-shifter = evdev.InputDevice(device_path)
+# The name of the device you're looking for
+DEVICE_NAME = "xin-mo.com SHH Shifter Controller"
 
+def find_device_by_name(name):
+    """Find the input device by its name."""
+    for path in evdev.list_devices():
+        device = evdev.InputDevice(path)
+        if device.name == name:
+            return device
+    raise ValueError(f"Device with name '{name}' not found")
+
+try:
+    shifter = find_device_by_name(DEVICE_NAME)
+    print(f"Found device: {shifter.name} at {shifter.path}")
+except ValueError as e:
+    print(e)
+    exit(1)
+
+# Create the virtual device
 virtual_device = uinput.Device(BTN_MAP.values())
 
 print(f"Listening for events on {shifter.path}...")
 
+# Process events from the shifter device
 for event in shifter.read_loop():
     if event.type == evdev.ecodes.EV_KEY and event.code in BTN_MAP:
         virtual_device.emit(BTN_MAP[event.code], event.value)
+
 
